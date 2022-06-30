@@ -20,11 +20,10 @@ Using Blynk IoT to control Arduino MKR WiFi 1010, and return sensor data to phon
     - Make an account with Blynk [Blynk Sign Up](https://blynk.cloud/dashboard/register)
 
 # Part 2: Getting Started With Blynk IoT
+ ### check out their documentation [link](https://docs.blynk.io/en/getting-started/what-do-i-need-to-blynk)
 
-1. Documentation [link](https://docs.blynk.io/en/getting-started/what-do-i-need-to-blynk)
-
-
-# Part 3: Arduino Code ReadMe
+# Part 3: Arduino Code
+see ArduinoCode/ArduinoCode.ino
 
 ### Features: 
   1) Feed at certain times throughout the day
