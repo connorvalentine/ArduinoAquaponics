@@ -3,8 +3,18 @@ Using Blynk IoT to control Arduino MKR WiFi 1010, and return sensor data to phon
 
 # Part 1: Downloading the Necessary Software
 
-- 1. Download the Arduino IDE onto your computer. Any version should be fine. [Download Arduino IDE](https://www.arduino.cc/en/software)
-- 2. Download the Blynk IoT app onto your phone. Make sure it is NOT the Legacy app, which will no longer be supported.
+### Download the Arduino IDE onto your computer. Any version should be fine. [Download Arduino IDE](https://www.arduino.cc/en/software)
+1) install all the recommended software when you open the Arduino IDE
+2) Select Board (Arduino MKR WiFi 1010)
+
+
+### Option 1: Download the Blynk IoT legacy App .
+    - this is the version I use. It was free to get started
+    - Make an account with Blynk [Blynk Sign Up](https://blynk.cloud/dashboard/register)
+
+### Option 2: Download the Blynk IoT app onto your phone. Make sure it is NOT the Legacy app, which will no longer be supported. You will need to pay $5/month to have the functionality of the legacy app.
+
+    - I would like to upgrade to this version, but ran out of time. The new version supports access from the PC as well. There are a lot of cool upgrades, and you would learn a lot about blynk during the transfer from legacy to pro.
     - [Blynk Download on Google Play](https://play.google.com/store/apps/details?id=cloud.blynk&hl=en_US&gl=US).
     - [Blynk Download for Iphone](https://apps.apple.com/us/app/blynk-iot-new/id1559317868).
     - Make an account with Blynk [Blynk Sign Up](https://blynk.cloud/dashboard/register)
@@ -12,6 +22,7 @@ Using Blynk IoT to control Arduino MKR WiFi 1010, and return sensor data to phon
 # Part 2: Getting Started With Blynk IoT
 
 1. Documentation [link](https://docs.blynk.io/en/getting-started/what-do-i-need-to-blynk)
+
 
 # Part 3: Arduino Code ReadMe
 
