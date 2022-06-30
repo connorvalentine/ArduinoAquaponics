@@ -22,7 +22,9 @@ Using Blynk IoT to control Arduino MKR WiFi 1010, and return sensor data to phon
  ### check out their documentation [link](https://docs.blynk.io/en/getting-started/what-do-i-need-to-blynk)
 
 # Part 3: Arduino Code
-see ArduinoCode/ArduinoCode.ino
+open ArduinoCode/ArduinoCode.ino in the Arduino IDE
+- plug in the board to your USB. It should appear as a COM port in the bottom right of the Arduino IDE
+NOTE: There is a way to update the arduino code via wifi instead. The library is called Arduino Over The Air (ArduinoOTA). 
 
 ### update secrets.h with your wifi information
 ArduinoCode/secrets.h
