@@ -12,7 +12,6 @@ Main Code for Arduino MKR 1010 for Aquaponics control
 #include <SPI.h>
 #include <WiFiNINA.h>
 #include <utility/wifi_drv.h> //controlling LED on board
-#include <ArduinoOTA.h>
 #include <BlynkSimpleWiFiNINA.h>
 #include <TimeAlarms.h>
 #include <WidgetRTC.h>
@@ -490,11 +489,6 @@ void setup() {
   pinMode(growLightPin, OUTPUT);
   pinMode(fishLightPin, OUTPUT); 
   pinMode(floodSensorPin, INPUT);
-
-//  ArduinoOTA.setHostname("Loss of connection test");  // For OTA
-//  ArduinoOTA.begin();  // For OTA
-  // start the WiFi OTA library with internal (flash) based storage
-//  ArduinoOTA.begin(WiFi.localIP(), "Arduino", "ladybird", InternalStorage);
 }
 
 void loop(){
