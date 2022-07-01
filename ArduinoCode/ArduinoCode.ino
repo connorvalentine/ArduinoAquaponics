@@ -492,7 +492,6 @@ void setup() {
 }
 
 void loop(){
-    ArduinoOTA.poll(); // check for WiFi OTA updates
     timer.run(); //run timer  
     Alarm.delay(1000); //delay each alarm by 1 second after it is activated (helps with crashes)
 
