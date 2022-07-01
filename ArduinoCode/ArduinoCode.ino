@@ -483,8 +483,8 @@ void setup() {
   // Everynight at 12:05 am meal count set to 0;
   Alarm.alarmRepeat(0,5,1,flagreset); 
 
-  // Sync with Blynk every 900 milliseconds
-  setSyncInterval(900);
+  // Sync with Blynk every 3900 milliseconds
+  setSyncInterval(3900);
 
   // set pin modes 
   pinMode(growLightPin, OUTPUT);
@@ -504,7 +504,9 @@ void loop(){
 
     if (Blynk.connected()) {  // If connected run as normal
     Blynk.run();
-  } else if (ReCnctFlag == 0) {  // If NOT connected and not already trying to reconnect, set timer to try to reconnect in 30 seconds
+    } 
+    else if (ReCnctFlag == 0) {  // If NOT connected and not already trying to reconnect, set timer to try to reconnect in 30 seconds
+    Blynk.notify("Ladybird's Guardian has fallen offline");
     ReCnctFlag = 1;  // Set reconnection Flag
     // turn the onboard LED red to show it is connected
     WiFiDrv::analogWrite(25, 0);
@@ -512,11 +514,12 @@ void loop(){
     WiFiDrv::analogWrite(27, 0);
     Serial.println("Starting reconnection timer in 10 seconds...");
     timer.setTimeout(10000L, []() {  // Lambda Reconnection Timer Function
-      ReCnctFlag = 0;  // Reset reconnection Flag
-      ReCnctCount++;  // Increment reconnection Counter
-      Serial.print("Attempting reconnection #");
-      Serial.println(ReCnctCount);
-      Blynk.connect();  // Try to reconnect to the server
-    });  // END Timer Function
-  }
+        ReCnctFlag = 0;  // Reset reconnection Flag
+        ReCnctCount++;  // Increment reconnection Counter
+        Serial.print("Attempting reconnection #");
+        Serial.println(ReCnctCount);
+        Blynk.connect();  // Try to reconnect to the server
+        }
+    );  // END Timer Function
+    }
 }
