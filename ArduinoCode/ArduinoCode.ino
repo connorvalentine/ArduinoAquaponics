@@ -92,12 +92,13 @@ BLYNK_WRITE(V14) {
 }
 
 // fish tank light on and off times
-AlarmId alarmFishOn;
-AlarmId alarmFishOff;
+
 bool growLightsOnFlag = false;
 bool fishLightsOnFlag = false;
 
 BLYNK_WRITE(V15) {
+  AlarmId alarmFishOn;
+  AlarmId alarmFishOff;
   // clear old alarms
   Alarm.free(alarmFishOn);
   Alarm.free(alarmFishOff);
@@ -159,10 +160,18 @@ void fishLightsOff(){
 }
 
 void lightsMaintain(){
-  if (growLightsOnFlag == true){digitalWrite(growLightPin, HIGH);}
-  if (growLightsOnFlag == false){digitalWrite(growLightPin, LOW);}
-  if (fishLightsOnFlag == true){digitalWrite(fishLightPin, HIGH);}
-  if (fishLightsOnFlag == false){digitalWrite(fishLightPin, LOW);} 
+  if (growLightsOnFlag == true){
+    digitalWrite(growLightPin, HIGH);
+  }
+  if (growLightsOnFlag == false){
+    digitalWrite(growLightPin, LOW);
+  }
+  if (fishLightsOnFlag == true){
+    digitalWrite(fishLightPin, HIGH);
+  }
+  if (fishLightsOnFlag == false){
+    digitalWrite(fishLightPin, LOW);
+  } 
 }
 
 ////// lights on/off buttons
@@ -204,33 +213,31 @@ BLYNK_WRITE(V9) {
   numfeedings = param.asInt();
 }
 
-// Initialize default times for feeding
-int time1; //= 32400; // 9 am
-int time2; //= 50400; // 2 pm
-int time3; //= 68400; // 7 pm
-int time4; //= 82800; // 11 pm
-AlarmId alarmMeal1;
-AlarmId alarmMeal2;
-AlarmId alarmMeal3;
-AlarmId alarmMeal4;
-
 // Function calls to change default feeding times 
 BLYNK_WRITE(V10) {
+  int time1; //= 32400; // 9 am
+  AlarmId alarmMeal1;
   Alarm.free(alarmMeal1);
   time1 = param[0].asLong();
   alarmMeal1 = Alarm.alarmRepeat(hour(time1),minute(time1),second(time1),mealTime);
   }
 BLYNK_WRITE(V11) {
+  int time2; //= 50400; // 2 pm
+  AlarmId alarmMeal2;
   Alarm.free(alarmMeal2);
   time2 = param[0].asLong();
   alarmMeal2 = Alarm.alarmRepeat(hour(time2),minute(time2),second(time2),mealTime);
 }
 BLYNK_WRITE(V12) {
+  int time3; //= 68400; // 7 pm
+  AlarmId alarmMeal3;
   Alarm.free(alarmMeal3);
   time3 = param[0].asLong();
   alarmMeal3 = Alarm.alarmRepeat(hour(time3),minute(time3),second(time3),mealTime);
 }
 BLYNK_WRITE(V13) {
+  int time4; //= 82800; // 11 pm
+  AlarmId alarmMeal4;
   Alarm.free(alarmMeal4);
   time4 = param[0].asLong();
   alarmMeal4 = Alarm.alarmRepeat(hour(time4),minute(time4),second(time4),mealTime);
@@ -256,10 +263,11 @@ BLYNK_WRITE(V8){
 // Sensor Functions
 /////////////////////////////////////////////////
 
-///// function: measure temperature
-float temperature = 0;
-OneWire ds(thermocouplePin);  // on digital pin 1
-void measureTemp(){
+void measureSensors(){
+  ////////  measure temperature
+
+  float temperature = 0;
+  OneWire ds(thermocouplePin);  // on digital pin 1
   //returns the temperature from one DS18S20 in DEG Celsius
   byte data[12];
   byte addr[8];
@@ -288,47 +296,41 @@ void measureTemp(){
   float TemperatureSum = tempRead / 16;
   temperature = (TemperatureSum*9/5) + 32; //C to F 
   Blynk.virtualWrite(V3, temperature);
-}
 
-///// function: measure tds
-float tds = 0;  
-const int numTDSReadings = 15;       // number of readings that we will average for each datapoint
-float tdsArray[numTDSReadings];      // the readings from the analog input
-int tdsIndex = 0;                 // the index of the current reading
-
-void measureTDS() {
-    short int TDS_sensor = analogRead(TDSSensorPin);
-    float averageVoltage = TDS_sensor* 3.3 / 1023.0; // read the analog value more stable by the median filtering algorithm, and convert to voltage value
-    float compensationCoefficient=1.0+0.02*(((temperature-32)*5/9)-25.0);    //temperature compensation formula: fFinalResult(25^C) = fFinalResult(current)/(1.0+0.02*(fTP-25.0));
-    float compensationVolatge=averageVoltage/compensationCoefficient;  //temperature compensation
-    tds=(133.42*compensationVolatge*compensationVolatge*compensationVolatge - 255.86*compensationVolatge*compensationVolatge + 857.39*compensationVolatge)*0.5; //convert voltage value to tds value
-    tdsArray[tdsIndex] = tds; // save tds measurements to array
-    
-    // calculate the average of the array  
-    float tdsSum = 0;
-    byte i;
-    for (i=0; i< numTDSReadings; i++)
-    {
-        tdsSum += tdsArray[i];
-    }
-    // add to the index, so we can overwrite the old values when we hit the end of the array
-    ++tdsIndex;
-    if (tdsIndex == numTDSReadings){
-      tdsIndex = 0;
-    }
-
+  ///// function: measure tds
+  float tds = 0;  
+  const int numTDSReadings = 15;       // number of readings that we will average for each datapoint
+  float tdsArray[numTDSReadings];      // the readings from the analog input
+  int tdsIndex = 0;                 // the index of the current reading
+  short int TDS_sensor = analogRead(TDSSensorPin);
+  float averageVoltage = TDS_sensor* 3.3 / 1023.0; // read the analog value more stable by the median filtering algorithm, and convert to voltage value
+  float compensationCoefficient=1.0+0.02*(((temperature-32)*5/9)-25.0);    //temperature compensation formula: fFinalResult(25^C) = fFinalResult(current)/(1.0+0.02*(fTP-25.0));
+  float compensationVolatge=averageVoltage/compensationCoefficient;  //temperature compensation
+  tds=(133.42*compensationVolatge*compensationVolatge*compensationVolatge - 255.86*compensationVolatge*compensationVolatge + 857.39*compensationVolatge)*0.5; //convert voltage value to tds value
+  tdsArray[tdsIndex] = tds; // save tds measurements to array
+  
+  // calculate the average of the array  
+  float tdsSum = 0;
+  byte i;
+  for (i=0; i< numTDSReadings; i++)
+  {
+      tdsSum += tdsArray[i];
+  }
+  // add to the index, so we can overwrite the old values when we hit the end of the array
+  ++tdsIndex;
+  if (tdsIndex == numTDSReadings){
+    tdsIndex = 0;
+  }
   // push measurement to Blynk
   float tdsMeasurement = tdsSum/numTDSReadings;    
   Blynk.virtualWrite(V5, tdsMeasurement);
-}
 
-///// function: measure pH
-float pH = 0;
-const int numPHReadings = 15;       // number of readings that we will average for each datapoint
-float pHArray[numPHReadings];      // the readings from the analog input
-int pHIndex = 0;                 // the index of the current reading
+  ///// function: measure pH
+  float pH = 0;
+  const int numPHReadings = 15;       // number of readings that we will average for each datapoint
+  float pHArray[numPHReadings];      // the readings from the analog input
+  int pHIndex = 0;                 // the index of the current reading
 
-void measurepH() {
   // first we take one pH reading
   short int PH_sensor = analogRead(pHSensorPin);
   float averageVoltagePH = PH_sensor*(3.3/1024);   // Convert the analog reading (readings are 0 - 1023) to (0-3.3 voltage)
@@ -351,60 +353,59 @@ void measurepH() {
   // push measurement to Blynk
   float pHMeasurement = pHSum/numPHReadings;
   Blynk.virtualWrite(V4, pHMeasurement);
+
+
+  ////// function: measure turbidity 
+  float turbidity = 0;
+  const int numTurbReadings = 15;       // number of readings that we will average for each datapoint
+  float turbArray[numTurbReadings];      // the readings from the analog input
+  int turbIndex = 0;                 // the index of the current reading
+
+  short int turbid_sensor = analogRead(TurbSensorPin);// turbidity sensor on A1 // Convert the analog reading (0 - 1023) to (0-3.3 voltage)
+  float tv = turbid_sensor * (4.2/1024); // scale by 4.2 v (max for calibration standards from DFRobot... would normally do 3.3)
+  turbidity = 4000*(1-(pow(2.3,(tv-4.2)))); // change so voltage is a turbidity measurement 
+  turbArray[turbIndex] = turbidity; // save pH measurements to array
+
+  // calculate the average of the array  
+  float turbSum = 0;
+  byte i;
+  for (i=0; i< numTurbReadings; i++)
+  {
+      turbSum += turbArray[i];
+  }
+  // add to the index, so we can overwrite the old values when we hit the end of the array
+  ++turbIndex;
+  if (turbIndex == numTurbReadings){
+    turbIndex = 0;
+  }
+
+  float turbMeasurement = turbSum/numTurbReadings;
+  Blynk.virtualWrite(V6, turbMeasurement);
+
+  ////// function: check for water on floor using water sensor
+  // top of water sensor is not waterproof. May need a work around
+  int waterVal;// this will change if water is detected
+  waterVal = digitalRead(floodSensorPin);
+  SerialUSB.println(waterVal);
+  if(waterVal==LOW){
+    // if the sensor is not touching water, keep the pump on
+  }
+  else{ 
+    // if the sensor is touching water, turn off pump, and notify
+    Blynk.notify(String("FLOOD ALERT"));
+    terminal.println(String("FLOOD ALERT"));
+    terminal.flush();
+  }
+  Blynk.virtualWrite(V18, waterVal);
 }
 
-////// function: measure turbidity 
-float turbidity = 0;
-const int numTurbReadings = 15;       // number of readings that we will average for each datapoint
-float turbArray[numTurbReadings];      // the readings from the analog input
-int turbIndex = 0;                 // the index of the current reading
 
-void measureTurb(){
-    short int turbid_sensor = analogRead(TurbSensorPin);// turbidity sensor on A1 // Convert the analog reading (0 - 1023) to (0-3.3 voltage)
-    float tv = turbid_sensor * (4.2/1024); // scale by 4.2 v (max for calibration standards from DFRobot... would normally do 3.3)
-    turbidity = 4000*(1-(pow(2.3,(tv-4.2)))); // change so voltage is a turbidity measurement 
-    turbArray[turbIndex] = turbidity; // save pH measurements to array
 
-    // calculate the average of the array  
-    float turbSum = 0;
-    byte i;
-    for (i=0; i< numTurbReadings; i++)
-    {
-        turbSum += turbArray[i];
-    }
-    // add to the index, so we can overwrite the old values when we hit the end of the array
-    ++turbIndex;
-    if (turbIndex == numTurbReadings){
-      turbIndex = 0;
-    }
-
-    float turbMeasurement = turbSum/numTurbReadings;
-    Blynk.virtualWrite(V6, turbMeasurement);
-}
-
-////// function: check for water on floor using water sensor
-// top of water sensor is not waterproof. May need a work around
-int waterVal;// this will change if water is detected
-void checkForWater(){
-    waterVal = digitalRead(floodSensorPin);
-    SerialUSB.println(waterVal);
-    if(waterVal==LOW){
-      // if the sensor is not touching water, keep the pump on
-    }
-    else{ 
-      // if the sensor is touching water, turn off pump, and notify
-      Blynk.notify(String("FLOOD ALERT"));
-      terminal.println(String("FLOOD ALERT"));
-      terminal.flush();
-   }
-    Blynk.virtualWrite(V18, waterVal);
-}
 /////////////////////////////////////////////////////
 /////////////// UPDATE FUNCTIONS///////////////////
 // These are run at a regular intervals in void setup()
 // timer.setInterval(interval,function_name)
 /////////////////////////////////////////////////////
-//
 
 ///// Reset function - can press button in Blynk and this will reset the arduino
 void(* resetFunc) (void) = 0; //declare reset function @ address 0
@@ -440,7 +441,6 @@ void flagreset(){
 }
 
 ///// function in void loop() to reconnect to wifi. activated when the wifi signal is lost.
-int DeviceLED = 2;
 int ReCnctFlag = 0; // Reconnection Flag
 int ReCnctCount = 0;
 
@@ -471,11 +471,7 @@ void setup() {
   
   // Update the sensors at odd intervals. This prevents crashes
   timer.setInterval(30069L, updateTime);
-  timer.setInterval(1010L, measureTDS);
-  timer.setInterval(1060L, measureTurb);
-  timer.setInterval(1110L, measurepH);
-  timer.setInterval(1160L, measureTemp);
-  timer.setInterval(1210L, checkForWater);
+  timer.setInterval(1010L, measureSensors);
   timer.setInterval(3310L, lightsMaintain);
   timer.setInterval(1170L,UpTime);
 
