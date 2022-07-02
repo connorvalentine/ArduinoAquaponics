@@ -387,7 +387,6 @@ void measureTurb(){
 int waterVal;// this will change if water is detected
 void checkForWater(){
     waterVal = digitalRead(floodSensorPin);
-    SerialUSB.println(waterVal);
     if(waterVal==LOW){
       // if the sensor is not touching water, keep the pump on
     }
@@ -446,8 +445,6 @@ int ReCnctCount = 0;
 
 void UpTime() {
   Blynk.virtualWrite(V20, millis() / 60000);  // Send UpTime minutes to App
-  Serial.print("UpTime: ");
-  Serial.println(millis() / 1000);  // Send UpTime seconds to Serial
   // turn the onboard LED green to show it is connected
   WiFiDrv::analogWrite(25, 255);
   WiFiDrv::analogWrite(26, 0);
@@ -455,7 +452,6 @@ void UpTime() {
 }
 
 // reset function to reset the arduino
-void(* resetFunc) (void) = 0; //declare reset function @ address 0
 
 ////////////////////////////////////////////////////
 ////////////// VOID SETUP FUNCTION//////////////////
@@ -502,11 +498,13 @@ void loop(){
     Blynk.run();
     } 
     else if (ReCnctCount < 10){ 
+      Serial.println("lost connection - reconnecting");
       ReCnctCount++;  // Increment reconnection Counter
       Blynk.config(auth, server, port); 
       Blynk.begin(auth,ssid, pass,"blynk-cloud.com", 8080); //try to reconnect to blynk
     }
     else {
+      Serial.println("resetting arduino!");
       resetFunc(); //call reset
     }
 }
