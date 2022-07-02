@@ -454,6 +454,9 @@ void UpTime() {
   WiFiDrv::analogWrite(27, 0);
 }
 
+// reset function to reset the arduino
+void(* resetFunc) (void) = 0; //declare reset function @ address 0
+
 ////////////////////////////////////////////////////
 ////////////// VOID SETUP FUNCTION//////////////////
 ////////////////////////////////////////////////////
@@ -498,21 +501,12 @@ void loop(){
     if (Blynk.connected()) {  // If connected run as normal
     Blynk.run();
     } 
-    else if (ReCnctFlag == 0) {  // If NOT connected and not already trying to reconnect, set timer to try to reconnect in 30 seconds
-    Blynk.notify("Ladybird's Guardian has fallen offline");
-    ReCnctFlag = 1;  // Set reconnection Flag
-    // turn the onboard LED red to show it is connected
-    WiFiDrv::analogWrite(25, 0);
-    WiFiDrv::analogWrite(26, 255);
-    WiFiDrv::analogWrite(27, 0);
-    Serial.println("Starting reconnection timer in 10 seconds...");
-    timer.setTimeout(10000L, []() {  // Lambda Reconnection Timer Function
-        ReCnctFlag = 0;  // Reset reconnection Flag
-        ReCnctCount++;  // Increment reconnection Counter
-        Serial.print("Attempting reconnection #");
-        Serial.println(ReCnctCount);
-        Blynk.connect();  // Try to reconnect to the server
-        }
-    );  // END Timer Function
+    else if (ReCnctCount < 10){ 
+      ReCnctCount++;  // Increment reconnection Counter
+      Blynk.config(auth, server, port); 
+      Blynk.begin(auth,ssid, pass,"blynk-cloud.com", 8080); //try to reconnect to blynk
+    }
+    else {
+      resetFunc(); //call reset
     }
 }
